@@ -2,7 +2,9 @@ require("dotenv").config();
 const config = require("./config.json");
 const mongoose = require("mongoose");
 
-mongoose.connect(config.connectionString);
+// Use environment variable for MongoDB URI
+const MONGODB_URI = process.env.MONGODB_URI || config.connectionString;
+mongoose.connect(MONGODB_URI);
 
 const User = require("./models/user.modal");
 const Note = require("./models/note.modal");
@@ -17,6 +19,9 @@ const { authenticateToken } = require("./utilities");
 app.use(express.json());
 
 app.use(cors({ origin: "*" }));
+
+// Set port
+const PORT = process.env.PORT || 5000;
 
 app.get("/", (req, res) => {
   res.json({ data: "Hello Anand" });
@@ -286,9 +291,8 @@ app.get("/search-notes/", authenticateToken, async (req, res) => {
   }
 });
 
-const PORT = 8000;  
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-})
+});
 
 module.exports = app;
